@@ -36,7 +36,7 @@ public class BibliotecarioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> findById(@PathVariable Long id) {
+    public ResponseEntity<?> findById(@PathVariable String id) {
         try {
             BibliotecarioModel bibliotecario = repository.findById(id).orElseThrow(() -> {
                 throw new InvalidParameterException("Bibliotecario inexistente!");
