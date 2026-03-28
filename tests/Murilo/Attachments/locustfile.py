@@ -40,4 +40,4 @@ class WebsiteUser(HttpUser):
     
     #@task
     #def index(self):
-    #    self.client.get("/livro", headers = self.headres)
+    #    self.client.get("/livro", headers = self.headers)
