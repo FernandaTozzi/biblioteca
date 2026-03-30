@@ -35,6 +35,7 @@ public class BibliotecarioController {
         });
         return ResponseEntity.ok(listDTO);
     }
+    
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
@@ -81,6 +82,7 @@ public class BibliotecarioController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+    
 
     @PatchMapping("/{id}/{atributo}/{novo}")
     public ResponseEntity patch(@PathVariable Long id, @PathVariable String atributo, @PathVariable String novo) {
