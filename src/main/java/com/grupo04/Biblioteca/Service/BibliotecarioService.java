@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.scheduling.annotation.Async;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -41,7 +42,8 @@ public class BibliotecarioService {
         }
     }
 
-    private void enviarEmail(String para, String assunto, String mensagem) {
+    @Async
+    public void enviarEmail(String para, String assunto, String mensagem) {
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setTo(para);
         mail.setSubject(assunto);
