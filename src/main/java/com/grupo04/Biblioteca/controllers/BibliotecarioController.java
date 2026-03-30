@@ -4,8 +4,8 @@ import com.grupo04.Biblioteca.dto.BibliotecarioDTO;
 import com.grupo04.Biblioteca.models.BibliotecarioModel;
 import com.grupo04.Biblioteca.repository.BibliotecarioRepository;
 import com.grupo04.Biblioteca.security.SenhaCriptografada;
+import com.grupo04.Biblioteca.services.EnviarEmail;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jdk.jfr.Name;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +21,10 @@ import java.util.List;
 public class BibliotecarioController {
     @Autowired
     public BibliotecarioRepository repository;
+
+    @Autowired
+    private EnviarEmail enviarEmail;
+
 
     @GetMapping
     public ResponseEntity<List<BibliotecarioDTO>> findAll() {
@@ -56,8 +60,14 @@ public class BibliotecarioController {
     @PostMapping
     public ResponseEntity save(@RequestBody BibliotecarioModel novoBiblitoecario) {
         try {
-            novoBiblitoecario.setCdSenha(SenhaCriptografada.hash(novoBiblitoecario.getCdSenha()));
-            repository.save(novoBiblitoecario);
+            novoBiblitoecario.setCdSenha(
+                    SenhaCriptografada.hash(novoBiblitoecario.getCdSenha())
+            );
+            BibliotecarioModel salvo = repository.save(novoBiblitoecario);
+            enviarEmail.enviarEmail(
+                    salvo.getDsEmail(),
+                    salvo.getNmBibliotecario()
+            );
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
