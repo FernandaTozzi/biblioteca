@@ -17,19 +17,28 @@ import java.nio.charset.StandardCharsets;
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
+
     @Value("${jwt.secret}")
     private String SECRET_KEY;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors(Customizer.withDefaults()) // 🔥 HABILITA CORS
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth").permitAll().requestMatchers("/bibliotecarios").permitAll()
+                        // 🔥 libera preflight (ESSENCIAL)
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+
+                        .requestMatchers("/auth").permitAll()
+                        .requestMatchers("/bibliotecarios").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 ->
-                        oauth2.jwt(Customizer.withDefaults()));
+                        oauth2.jwt(Customizer.withDefaults())
+                );
+
         return http.build();
     }
 
@@ -39,9 +48,9 @@ public class SecurityConfig {
                 SECRET_KEY.getBytes(StandardCharsets.UTF_8),
                 "HmacSHA256"
         );
+
         return NimbusJwtDecoder
                 .withSecretKey(key)
                 .build();
     }
-
 }
